@@ -1805,6 +1805,7 @@ Status Reader::unfilter_tile(
   }
 
   // Reverse the tile filters.
+  std::cerr << "JOE running reverse " << name << std::endl;
   RETURN_NOT_OK(filters.run_reverse(
       tile, storage_manager_->config(), result_cell_slab_ranges));
 
@@ -1833,6 +1834,7 @@ Status Reader::unfilter_tile(
 
   // Reverse the tile filters, but do not use selective
   // unfiltering for offset tiles.
+  std::cerr << "JOE running reverse " << name << std::endl;
   RETURN_NOT_OK(
       offset_filters.run_reverse(tile, storage_manager_->config(), nullptr));
   RETURN_NOT_OK(filters.run_reverse(

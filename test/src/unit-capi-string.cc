@@ -150,6 +150,22 @@ void StringFx::write_array(const std::string& array_name) {
   REQUIRE(rc == TILEDB_OK);
 
   // Prepare buffers
+  std::cerr << "JOE StringFx::write_array " << std::endl
+    << ", sizeof(UTF8_STRINGS) " << sizeof(UTF8_STRINGS) << std::endl
+    << ", UTF8_NULL_SIZE " << UTF8_NULL_SIZE << std::endl
+    << ", UTF8_OFFSET_0 " << UTF8_OFFSET_0 << std::endl
+    << ", UTF8_OFFSET_1 " << UTF8_OFFSET_1 << std::endl
+    << ", UTF8_OFFSET_2 " << UTF8_OFFSET_2 << std::endl
+    << ", UTF8_OFFSET_3 " << UTF8_OFFSET_3 << std::endl
+    << ", sizeof(UTF8_STRINGS_VAR) " << sizeof(UTF8_STRINGS_VAR) << std::endl
+    << ", UTF16_OFFSET_0 " << UTF16_OFFSET_0 << std::endl
+    << ", UTF16_OFFSET_1 " << UTF16_OFFSET_1 << std::endl
+    << ", UTF16_OFFSET_2 " << UTF16_OFFSET_2 << std::endl
+    << ", UTF16_OFFSET_3 " << UTF16_OFFSET_3 << std::endl
+    << ", sizeof(UTF16_STRINGS_VAR) " << sizeof(UTF16_STRINGS_VAR) << std::endl
+    << ", UTF16_NULL_SIZE " << UTF16_NULL_SIZE << std::endl
+    << ", sizeof(UTF8_STRINGS) " << sizeof(UTF8_STRINGS)
+    << std::endl;
   void* buffer_a1 = std::malloc(sizeof(UTF8_STRINGS) - UTF8_NULL_SIZE);
   uint64_t buffer_a2_offsets[] = {
       UTF8_OFFSET_0, UTF8_OFFSET_1, UTF8_OFFSET_2, UTF8_OFFSET_3};
@@ -189,6 +205,17 @@ void StringFx::write_array(const std::string& array_name) {
   rc = tiledb_query_set_buffer(
       ctx, query, attributes[0], buffers[0], &buffer_sizes[0]);
   REQUIRE(rc == TILEDB_OK);
+
+  std::cerr << std::endl
+    << "JOE writing " << attributes[1]
+    << ": offset size " << buffer_sizes[1]
+    << std::endl;
+  for (uint64_t i = 0; i < buffer_sizes[1]; i += sizeof(uint64_t)) {
+    uint64_t *buff = (uint64_t*)buffers[1];
+    std::cerr << "  " << buff[i / sizeof(uint64_t)] << std::endl;
+  }
+  std::cerr << std::endl;
+
   rc = tiledb_query_set_buffer_var(
       ctx,
       query,
@@ -198,6 +225,17 @@ void StringFx::write_array(const std::string& array_name) {
       buffers[2],
       &buffer_sizes[2]);
   REQUIRE(rc == TILEDB_OK);
+
+  std::cerr << std::endl
+    << "JOE writing " << attributes[2]
+    << ": offset size " << buffer_sizes[3]
+    << std::endl;
+  for (uint64_t i = 0; i < buffer_sizes[3]; i += sizeof(uint64_t)) {
+    uint64_t *buff = (uint64_t*)buffers[3];
+    std::cerr << "  " << buff[i / sizeof(uint64_t)] << std::endl;
+  }
+  std::cerr << std::endl;
+
   rc = tiledb_query_set_buffer_var(
       ctx,
       query,

@@ -510,6 +510,8 @@ Status FilterPipeline::skip_chunk_reversal_fixed(
     return Status::Ok();
   }
 
+  std::cerr << "JOE skip_chunk_reversal_fixed 2 " << std::endl; 
+
   // Define inclusive cell index bounds for the chunk under consideration.
   const uint64_t chunk_cell_start = *cells_processed;
   assert(chunk_length % cell_size == 0);
@@ -517,6 +519,8 @@ Status FilterPipeline::skip_chunk_reversal_fixed(
   const uint64_t chunk_cell_end =
       chunk_cell_start + (chunk_length / cell_size) - 1;
   *cells_processed = *cells_processed + (chunk_length / cell_size);
+
+  std::cerr << "JOE skip_chunk_reversal_fixed 3 " << std::endl; 
 
   return skip_chunk_reversal_common(
       chunk_cell_start, chunk_cell_end, cs_it, cs_end, skip);
@@ -538,9 +542,17 @@ Status FilterPipeline::skip_chunk_reversal_var(
   assert(cells_size_processed);
   assert(cs_it);
 
+  std::cerr << "JOE skip_chunk_reversal_var 1 "
+    << ", chunk_length: " << chunk_length
+    << ", d_off: " << *d_off
+    << ", cells_processed: " << *cells_processed
+    << ", cells_size_processed: " << *cells_size_processed
+    << std::endl; 
+
   // As an optimization, don't waste any more instructions determining if
   // we need to skip this chunk if there aren't any filters to reverse.
   if (filters_.empty()) {
+    std::cerr << "JOE skip_chunk_reversal_var 2 " << std::endl; 
     *skip = false;
     return Status::Ok();
   }
@@ -550,8 +562,16 @@ Status FilterPipeline::skip_chunk_reversal_var(
   uint64_t total_cells = 0;
   uint64_t total_cell_size = 0;
   while (total_cell_size != chunk_length) {
+    std::cerr << "JOE skip_chunk_reversal_var 3 "
+      << ", total_cells: " << total_cells
+      << ", total_cell_size: " << total_cell_size
+      << std::endl; 
     const size_t d_off_idx = *cells_processed + total_cells;
     ++total_cells;
+
+    std::cerr << "JOE skip_chunk_reversal_var 3.1 "
+      << ", d_off_idx: " << d_off_idx
+      << std::endl; 
 
     // The last 'cell' is embedded as the length of the value tile.
     // Here, we don't care what the last cell value is, but we do care
@@ -565,6 +585,9 @@ Status FilterPipeline::skip_chunk_reversal_var(
 
     const uint64_t offset = d_off[d_off_idx];
     total_cell_size = offset - *cells_size_processed;
+    std::cerr << "JOE skip_chunk_reversal_var 3.2 "
+      << ", offset: " << offset
+      << std::endl; 
   }
 
   // Define inclusive cell index bounds for the chunk under consideration.
@@ -578,6 +601,8 @@ Status FilterPipeline::skip_chunk_reversal_var(
   *cells_processed = *cells_processed + total_cells;
   *cells_size_processed = *cells_size_processed + total_cell_size;
 
+  std::cerr << "JOE skip_chunk_reversal_var 4 " << std::endl; 
+
   return skip_chunk_reversal_common(
       chunk_cell_start, chunk_cell_end, cs_it, cs_end, skip);
 }
@@ -590,11 +615,22 @@ Status FilterPipeline::skip_chunk_reversal_common(
     const std::forward_list<std::pair<uint64_t, uint64_t>>::const_iterator&
         cs_end,
     bool* const skip) const {
+
+  std::cerr << "JOE skip_chunk_reversal_common "
+    << ", chunk_cell_start: " << chunk_cell_start
+    << ", chunk_cell_end: " << chunk_cell_end
+    << std::endl; 
+
   while (*cs_it != cs_end) {
     // Define inclusive cell index bounds for the cell slab range under
     // consideration.
     const uint64_t cs_start = (*cs_it)->first;
     const uint64_t cs_end = ((*cs_it)->second - 1);
+
+    std::cerr << "JOE skip_chunk_reversal_common "
+      << ", cs_start: " << cs_start
+      << ", cs_end: " << cs_end
+      << std::endl; 
 
     // The interface contract enforces that elements in the cell slab range list
     // do not intersect and are ordered in ascending order. We can start by

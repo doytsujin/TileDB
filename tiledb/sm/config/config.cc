@@ -62,12 +62,12 @@ const std::string Config::SM_MEMORY_BUDGET_VAR = "10737418240";  // 10GB;
 const std::string Config::SM_ENABLE_SIGNAL_HANDLERS = "true";
 const std::string Config::SM_NUM_ASYNC_THREADS = "1";
 const std::string Config::SM_NUM_READER_THREADS =
-    utils::parse::to_str(std::thread::hardware_concurrency());
+    "1"; //utils::parse::to_str(std::thread::hardware_concurrency());
 const std::string Config::SM_NUM_WRITER_THREADS =
-    utils::parse::to_str(std::thread::hardware_concurrency());
+    "1"; //utils::parse::to_str(std::thread::hardware_concurrency());
 #ifdef HAVE_TBB
 const std::string Config::SM_NUM_TBB_THREADS =
-    utils::parse::to_str((int)tbb::task_scheduler_init::automatic);
+    "1"; //utils::parse::to_str((int)tbb::task_scheduler_init::automatic);
 #else
 const std::string Config::SM_NUM_TBB_THREADS = "-1";
 #endif
